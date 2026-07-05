@@ -344,4 +344,4 @@ Interested in:
 
 ## ⭐ Acknowledgements
 
-This project was developed as part of an AI Voice Agent internship assignment to demonstrate conversational AI, workflow automation, and cloud integration for real-world appointment management.
+This project was developed to demonstrate conversational AI, workflow automation, and cloud integration for real-world appointment management.
