@@ -1,0 +1,150 @@
+{
+  "name": "check-appointment-availability",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "check-appointment-availability",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "91f0664b-d5e8-44e8-8665-d244af67704b",
+      "name": "Retell AI Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1392,
+        416
+      ],
+      "webhookId": "b7d4db5e-8bee-4ded-95c5-eaa0183dc079"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// ==============================\n// Parse Date & Time\n// Supports:\n// 1. YYYY-MM-DD\n// 2. July 3, 2026\n// ==============================\n\n// Incoming body\nconst body = $input.item.json.body || {};\n\nconst name = body.name;\nconst phone = body.phone;\nconst email = body.email;\nconst service = body.service;\nconst dateStr = body.date;\nconst timeStr = body.time;\n\n// -----------------------------\n// Validate\n// -----------------------------\nif (!dateStr) {\n  throw new Error(\"Appointment date is missing.\");\n}\n\nif (!timeStr) {\n  throw new Error(\"Appointment time is missing.\");\n}\n\n// -----------------------------\n// Parse Time\n// -----------------------------\nconst timeMatch = timeStr.match(/^(\\d{1,2}):(\\d{2})\\s*(AM|PM)$/i);\n\nif (!timeMatch) {\n  throw new Error(`Invalid time format: ${timeStr}`);\n}\n\nlet hours = parseInt(timeMatch[1], 10);\nconst minutes = parseInt(timeMatch[2], 10);\nconst period = timeMatch[3].toUpperCase();\n\nif (period === \"PM\" && hours !== 12) hours += 12;\nif (period === \"AM\" && hours === 12) hours = 0;\n\n// -----------------------------\n// Parse Date\n// Accepts:\n// 2026-07-03\n// July 3, 2026\n// -----------------------------\nlet year, month, day;\n\nif (/^\\d{4}-\\d{2}-\\d{2}$/.test(dateStr)) {\n\n  // ISO Format\n  [year, month, day] = dateStr.split(\"-\").map(Number);\n\n} else {\n\n  // Natural language format\n  const parsed = new Date(dateStr);\n\n  if (isNaN(parsed.getTime())) {\n    throw new Error(`Invalid date format: ${dateStr}`);\n  }\n\n  year = parsed.getFullYear();\n  month = parsed.getMonth() + 1;\n  day = parsed.getDate();\n}\n\n// -----------------------------\n// Build RFC3339 (Google Calendar)\n// -----------------------------\nfunction buildDate(hour, minute) {\n\n  return `${year}-${String(month).padStart(2,\"0\")}-${String(day).padStart(2,\"0\")}T${String(hour).padStart(2,\"0\")}:${String(minute).padStart(2,\"0\")}:00+05:30`;\n\n}\n\n// -----------------------------\n// End Time (+30 mins)\n// -----------------------------\nlet endHour = hours;\nlet endMinute = minutes + 30;\n\nif (endMinute >= 60) {\n  endMinute -= 60;\n  endHour++;\n}\n\nif (endHour >= 24) {\n  endHour = 0;\n}\n\n// -----------------------------\n// Appointment ID\n// -----------------------------\nconst appointmentId = `APT-${Date.now()}`;\n\n// -----------------------------\n// Return\n// -----------------------------\nreturn {\n  json: {\n    appointmentId,\n\n    name,\n    phone,\n    email,\n    service,\n\n    date: `${year}-${String(month).padStart(2,\"0\")}-${String(day).padStart(2,\"0\")}`,\n    time: timeStr,\n\n    startDateTime: buildDate(hours, minutes),\n    endDateTime: buildDate(endHour, endMinute)\n  }\n};"
+      },
+      "id": "6ba19b69-d304-48a1-b5be-c647ad8b304c",
+      "name": "Parse Date & Time",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_CALENDAR_ID",
+          "mode": "list",
+          "cachedResultName": "YOUR_CALENDAR"
+        },
+        "returnAll": true,
+        "timeMin": "={{$json.date}}T00:00:00+05:30",
+        "timeMax": "={{$json.date}}T23:59:59+05:30",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -1040,
+        416
+      ],
+      "id": "cf96efc1-806e-4468-b647-a5666449ad56",
+      "name": "Get many events",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "YOUR_GOOGLECALENDAROAUTH2API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Requested appointment\nconst booking = $('Parse Date & Time').first().json;\n\nconst requestedStart = new Date(booking.startDateTime);\nconst requestedEnd = new Date(booking.endDateTime);\n\n// Events returned from Google Calendar\nconst events = $input.all();\n\nlet available = true;\n\nfor (const event of events) {\n\n    // Skip empty items returned by \"Always Output Data\"\n    if (!event.json.start || !event.json.end) {\n        continue;\n    }\n\n    const eventStart = new Date(\n        event.json.start.dateTime || event.json.start.date\n    );\n\n    const eventEnd = new Date(\n        event.json.end.dateTime || event.json.end.date\n    );\n\n    // Overlap check\n    const overlaps =\n        requestedStart < eventEnd &&\n        requestedEnd > eventStart;\n\n    if (overlaps) {\n        available = false;\n        break;\n    }\n}\n\nreturn [\n{\n    json: {\n        ...booking,\n        available\n    }\n}\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -848,
+        416
+      ],
+      "id": "c02b1dfb-c3a6-408a-aa0e-49544befdcaf",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{\n{\n  \"available\": $json.available,\n  \"message\": $json.available\n    ? \"Appointment slot is available.\"\n    : \"The selected appointment time is already booked. Please choose another time.\"\n}\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -672,
+        416
+      ],
+      "id": "8aa6a1d1-cdfe-4b1e-b6ef-f153c1aede40",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Retell AI Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Date & Time": {
+      "main": [
+        [
+          {
+            "node": "Get many events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "meta": {},
+  "nodeGroups": [],
+  "id": "ZDZIJl3SvbarchGe",
+  "tags": []
+}

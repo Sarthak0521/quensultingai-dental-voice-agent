@@ -1,0 +1,575 @@
+{
+  "agent_id": "",
+  "channel": "voice",
+  "last_modification_timestamp": 1783250813720,
+  "agent_name": "QUENSULTING AI DENTAL CLINIC",
+  "version_description": "",
+  "response_engine": {
+    "type": "conversation-flow",
+    "version": 1,
+    "conversation_flow_id": "conversation_flow_f17fa1964376"
+  },
+  "language": "en-US",
+  "data_storage_setting": "everything",
+  "opt_in_signed_url": false,
+  "version": 1,
+  "base_version": 0,
+  "assigned_tags": [],
+  "is_published": false,
+  "version_title": "Dental Clinic Appointment Agent",
+  "post_call_analysis_model": "gpt-4.1",
+  "pii_config": {
+    "mode": "post_call",
+    "categories": []
+  },
+  "handbook_config": {
+    "default_personality": true,
+    "ai_disclosure": true
+  },
+  "voice_id": "retell-Kate",
+  "fallback_voice_ids": [],
+  "voice_temperature": 1,
+  "voice_speed": 1,
+  "volume": 1,
+  "enable_expressive_mode": false,
+  "max_call_duration_ms": 3600000,
+  "interruption_sensitivity": 0.9,
+  "allow_user_dtmf": true,
+  "user_dtmf_options": {},
+  "conversationFlow": {
+    "conversation_flow_id": "conversation_flow_f17fa1964376",
+    "version": 1,
+    "last_modification_timestamp": 1783252529921,
+    "global_prompt": "You are a professional and friendly AI receptionist for QuensultingAI Dental Clinic.\n\nYour responsibilities are:\n- Greet callers politely.\n- Understand the caller's intent.\n- Book appointments.\n- Answer FAQs about the clinic.\n- Collect patient information accurately.\n- Confirm booking details before submission.\n- If you don't know the answer, politely transfer the caller to a human receptionist.\n- Never invent information.\n- Keep responses concise and conversational.\n\nClinic Information:\n- Working Hours: Monday to Saturday, 9:00 AM \u2013 6:00 PM\n- Services:\n  \u2022 Dental Cleaning\n  \u2022 Root Canal Treatment\n  \u2022 Teeth Whitening\n  \u2022 Braces Consultation\n  \u2022 Tooth Extraction\n  \u2022 General Dental Consultation",
+    "nodes": [
+      {
+        "instruction": {
+          "type": "static_text",
+          "text": "Hello! Thank you for calling QuensultingAI Dental Clinic.\n\nI'm your virtual receptionist.\n\nHow may I help you today?\n\nYou can book an appointment, ask about our services, clinic timings, consultation fees, payment methods, or our location.\n"
+        },
+        "name": "Welcome Node",
+        "edges": [
+          {
+            "destination_node_id": "node-1782831674512",
+            "id": "edge-1782831403413-511dqavjq",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Choose this transition if the caller wants to book, schedule, reserve, or make a dental appointment."
+            }
+          },
+          {
+            "destination_node_id": "node-1782831890826",
+            "id": "edge-1782831457078-nhtoeznje",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Choose this if the caller asks about timings, fees, location, services, payment methods, or walk-ins."
+            }
+          },
+          {
+            "destination_node_id": "node-1783233430577",
+            "id": "edge-1782831474982-ew0ckgd9w",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Choose this if the caller asks to talk to a receptionist or a human agent."
+            }
+          },
+          {
+            "destination_node_id": "node-1782832471494",
+            "id": "edge-1782831485740-cphgc9d3j",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Choose this for anything that doesn't fit the above categories."
+            }
+          }
+        ],
+        "start_speaker": "agent",
+        "id": "start-node-1782831177994",
+        "type": "conversation",
+        "display_position": {
+          "x": 534,
+          "y": 6
+        }
+      },
+      {
+        "name": "End Call",
+        "id": "end-call-node-1782831177994",
+        "type": "end",
+        "display_position": {
+          "x": 2238,
+          "y": 774
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Politely end the call"
+        }
+      },
+      {
+        "name": "Book Appointment",
+        "edges": [
+          {
+            "destination_node_id": "node-1782895029941",
+            "id": "edge-1782831674512-nfew00mbe",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Take this transition after all required information has been collected and the caller has confirmed that the details are correct."
+            }
+          }
+        ],
+        "id": "node-1782831674512",
+        "type": "conversation",
+        "display_position": {
+          "x": 1038,
+          "y": -114
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "You are Emma, the friendly AI receptionist for QuensultingAI Dental Clinic.\n\nYour goal is to collect the caller's appointment details accurately and naturally.\n\nIf the caller is returning because their previous appointment slot was unavailable:\n\n- Preserve the previously collected Full Name, Phone Number, Email Address, and Dental Service.\n- Do NOT ask for those details again unless the caller explicitly wants to change them.\n- Ask only for a new Preferred Appointment Date, Preferred Appointment Time, or both.\n\nCollect the following information one item at a time:\n\n1. Full Name\n2. Mobile Phone Number\n3. Email Address\n4. Dental Service\n5. Preferred Appointment Date\n6. Preferred Appointment Time\n\nAvailable Services:\n- Dental Cleaning\n- Root Canal Treatment\n- Teeth Whitening\n- Braces Consultation\n- Tooth Extraction\n- General Dental Consultation\n\nConversation Rules:\n\n- Greet the caller warmly.\n- Ask only ONE question at a time.\n- If the caller provides multiple pieces of information in one response, extract all valid information and ask only for the remaining missing information.\n- Never ask again for information that has already been collected unless the caller requests to change it.\n- If the caller chooses a service that is not offered, politely explain that it is unavailable and ask them to choose one of the available services.\n- Validate the phone number. If it appears incomplete or invalid, politely ask the caller to repeat it.\n- Ensure the appointment date is today or a future date. Do not accept dates in the past.\n\nAppointment Date Rules:\n- Ask the caller to provide the date in one of these formats:\n  - YYYY-MM-DD (Example: 2026-07-03)\n  - Month Day, Year (Example: July 3, 2026)\n\nAppointment Time Rules:\n- Ask the caller to provide the time in 12-hour format with minutes and AM/PM.\n- Examples:\n  - 09:00 AM\n  - 10:30 AM\n  - 02:00 PM\n  - 05:30 PM\n\n- If the caller says a vague date such as \"tomorrow\", \"next Monday\", or \"this Friday\", politely ask them to provide the complete date in one of the supported formats.\n- If the caller says a vague time such as \"2 PM\", \"morning\", or \"afternoon\", politely ask them to provide the complete time including minutes, such as \"02:00 PM\".\n\n- Be polite, concise, and conversational throughout the interaction.\n\nAfter collecting all required information, summarize the appointment details exactly as follows:\n\nFull Name:\nPhone Number:\nEmail Address:\nDental Service:\nPreferred Appointment Date:\nPreferred Appointment Time:\n\nThen ask:\n\n\"Is this information correct?\"\n\nIf the caller confirms, transition to the Appointment Confirmation node.\n\nIf the caller wants to modify any detail, update only the requested information, summarize the complete appointment details again, and ask for confirmation before proceeding."
+        }
+      },
+      {
+        "name": "Clinic Information",
+        "edges": [
+          {
+            "destination_node_id": "node-1782831674512",
+            "id": "edge-ci-book",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "The caller wants to book, schedule, reserve, or make a dental appointment."
+            }
+          },
+          {
+            "destination_node_id": "node-1783233430577",
+            "id": "edge-ci-human",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "The caller asks to speak with a human, receptionist, or live agent, or asks a question that cannot be answered using the provided clinic information."
+            }
+          },
+          {
+            "destination_node_id": "end-call-node-1782831177994",
+            "id": "edge-ci-end",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "The caller clearly indicates they are finished, such as saying \"That's all\", \"No thanks\", \"Goodbye\", or \"Bye\"."
+            }
+          }
+        ],
+        "id": "node-1782831890826",
+        "type": "conversation",
+        "display_position": {
+          "x": 1038,
+          "y": 462
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Answer questions about the clinic.\n\nClinic Information\n\nClinic Name:\nQuensultingAI Dental Clinic\n\nAddress:\nNear Phoenix Market City Mall,\nViman Nagar, Pune.\n\nWorking Hours:\nMonday\u2013Saturday\n9:00 AM \u2013 6:00 PM\n\nServices:\n- Dental Cleaning\n- Root Canal Treatment\n- Teeth Whitening\n- Braces Consultation\n- Tooth Extraction\n- General Dental Consultation\n\nConsultation Fee:\n\u20b9500\n\nPayment Methods:\n- Cash\n- UPI\n- Credit Card\n- Debit Card\n\nWalk-ins:\nAccepted based on availability.\n\nEmergency Appointments:\nAvailable depending on doctor availability.\n\nInstructions:\n\n- Answer only using the information provided above.\n- If the caller asks something outside this information, politely offer to connect them to the Call Transfer node.\n- If the caller asks to book, schedule, reserve, or make an appointment at any point in the conversation, immediately transition to the Appointment Booking node. Do not continue answering clinic information in this node.\n- If the caller asks to speak with a human, receptionist, or live agent, transition to the Call Transfer node.\n- After answering each clinic-related question, ask:\n  \"Is there anything else I can help you with today? If you'd like, I can also help you book an appointment.\"\n- Continue answering follow-up questions in this node until the caller either:\n  \u2022 wants to book an appointment,\n  \u2022 requests a human receptionist,\n  \u2022 or clearly indicates they are finished (for example: \"That's all\", \"No thanks\", \"Goodbye\", or \"Bye\").\n- Never end the call on your own. Wait for the caller to indicate they are done."
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Answer any general questions politely.\n\nIf the question is unrelated to the dental clinic or cannot be answered confidently, politely say:\n\n\"I'm sorry, I don't have that information. I can connect you with our receptionist.\"\n\nAfter answering, ask if there is anything else you can help with. Keep answering follow-up questions and do not end the call yourself unless the caller says they are done or asks to be transferred."
+        },
+        "name": "Other Queries",
+        "edges": [
+          {
+            "destination_node_id": "node-1782831674512",
+            "id": "edge-oq-book",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "The caller wants to book, schedule, reserve, or make a dental appointment."
+            }
+          },
+          {
+            "id": "edge-oq-human",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "The caller asks to speak with a human, a receptionist, or a live agent, or you were unable to answer their question."
+            }
+          },
+          {
+            "destination_node_id": "end-call-node-1782831177994",
+            "id": "edge-oq-end",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "The caller indicates they have no further questions, says goodbye, or thanks you with nothing further."
+            }
+          }
+        ],
+        "id": "node-1782832471494",
+        "type": "conversation",
+        "display_position": {
+          "x": 2070,
+          "y": 1182
+        },
+        "skip_response_edge": {
+          "destination_node_id": "end-call-node-1782831177994",
+          "id": "skip-response-edge-1782832827158-3t3tm6pgb",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        }
+      },
+      {
+        "variables": [
+          {
+            "name": "name",
+            "type": "string",
+            "description": "Patient's full name"
+          },
+          {
+            "name": "phone",
+            "type": "string",
+            "description": "Patient's phone number "
+          },
+          {
+            "name": "email",
+            "type": "string",
+            "description": "Patient's email address"
+          },
+          {
+            "name": "service",
+            "type": "string",
+            "description": "Dental service selected"
+          },
+          {
+            "name": "date",
+            "type": "string",
+            "description": "Extract the patient's preferred appointment date.\n\nAlways return the date in ISO format:\nYYYY-MM-DD\n\nExamples:\n2026-07-03\n2026-07-10\n2026-12-25\n\nNever return:\nJuly 3, 2026\nTomorrow\nNext Monday\nFriday"
+          },
+          {
+            "name": "time",
+            "type": "string",
+            "description": "Extract the patient's preferred appointment time.\n\nAlways return in 12-hour format with AM or PM.\n\nExamples:\n09:00 AM\n10:30 AM\n02:15 PM"
+          }
+        ],
+        "else_edge": {
+          "destination_node_id": "node-1783245609331",
+          "id": "node-1782895029941-else-edge",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "name": "Extract variables",
+        "edges": [],
+        "id": "node-1782895029941",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 1518,
+          "y": 54
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "The caller has already reviewed and confirmed all appointment details.\n\nThe appointment slot has already been verified as available.\n\nDo NOT ask for confirmation again.\nDo NOT repeat the appointment details.\nDo NOT check appointment availability again.\n\nFirst, briefly tell the caller:\n\n\"Perfect! I'm booking your appointment now.\"\n\nThen immediately call the function:\n\nbook_dental_appointment\n\nWait for the function to finish before speaking.\n\nIf the function completes successfully, respond naturally:\n\n\"Great! Your appointment has been successfully booked. A confirmation email has also been sent to your registered email address. We look forward to seeing you at QuensultingAI Dental Clinic.\"\n\nThen transition to the Booking Success node.\n\nDo not mention appointment availability in this node.\n\nThe appointment details are:\n\nName: {{name}}\nPhone: {{phone}}\nEmail: {{email}}\nService: {{service}}\nDate: {{date}}\nTime: {{time}}"
+        },
+        "name": "Appointment Confirmation",
+        "edges": [
+          {
+            "destination_node_id": "node-1782896211068",
+            "id": "edge-1782895827764-ll0ehq93f",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If caller confirms the appointment details."
+            }
+          }
+        ],
+        "id": "node-1782895827764",
+        "type": "conversation",
+        "display_position": {
+          "x": 2262,
+          "y": -234
+        },
+        "skip_response_edge": {
+          "destination_node_id": "node-1782896211068",
+          "id": "skip-edge-appt-confirmation",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        }
+      },
+      {
+        "tool_id": "tool-1782896205443",
+        "else_edge": {
+          "id": "node-1782896211068-else-edge",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "name": "Book Dental Appointment",
+        "edges": [
+          {
+            "destination_node_id": "node-1782896878268",
+            "id": "edge-booking-success",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "The book_dental_appointment function completed successfully and the appointment was booked without any error."
+            }
+          }
+        ],
+        "enable_typing_sound": false,
+        "id": "node-1782896211068",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": false,
+        "display_position": {
+          "x": 2310,
+          "y": 414
+        },
+        "wait_for_result": true
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "The appointment has been successfully booked.\n\nTell the caller:\n\n\"Thank you. Your appointment has been successfully booked.\"\n\n\"A confirmation email has been sent to your registered email address.\"\n\n\"Our receptionist will contact you if any changes are required.\"\n\n\"Thank you for choosing QuensultingAI Dental Clinic.\"\n\n\"Have a wonderful day!\""
+        },
+        "name": "Booking Success",
+        "edges": [],
+        "id": "node-1782896878268",
+        "type": "conversation",
+        "display_position": {
+          "x": 2718,
+          "y": 270
+        },
+        "skip_response_edge": {
+          "destination_node_id": "end-call-node-1782831177994",
+          "id": "skip-response-edge-1782896926635-4bjwyb5hq",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "If the caller asks to speak with a receptionist, respond:\n\n\"I'd be happy to connect you with our receptionist.\n\nOur receptionist is available Monday through Saturday from 9:00 AM to 6:00 PM.\n\nAt the moment, I'm unable to transfer calls directly. If you'd like, you can call the clinic during working hours, and our receptionist will be happy to assist you.\"\n\nIf the caller has another clinic-related question, continue helping them.\n\nKeep the response brief, friendly, and professional."
+        },
+        "always_edge": {
+          "destination_node_id": "end-call-node-1782831177994",
+          "id": "always-edge-1783235300194-k9eouoyor",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Always"
+          }
+        },
+        "name": "Receptionist Availability",
+        "edges": [],
+        "id": "node-1783233430577",
+        "type": "conversation",
+        "display_position": {
+          "x": 1086,
+          "y": 1230
+        }
+      },
+      {
+        "name": "Appointment Unavailable",
+        "edges": [
+          {
+            "destination_node_id": "node-1782831674512",
+            "id": "edge-1783239732721-0385kv94i",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "The caller provides a new preferred appointment date, a new preferred appointment time, or both. Immediately transition to the Book Appointment node to continue the booking process using the updated information while preserving the previously collected name, phone number, email address, and dental service."
+            }
+          }
+        ],
+        "id": "node-1783239732721",
+        "type": "conversation",
+        "display_position": {
+          "x": 3030,
+          "y": -330
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "The requested appointment slot is no longer available.\n\nTell the caller:\n\n\"I'm sorry, that appointment time is already booked.\"\n\nThen ask:\n\n\"Please tell me another preferred appointment date, appointment time, or both.\"\n\nRules:\n\n- Keep the previously collected Full Name, Phone Number, Email Address, and Dental Service.\n- Do NOT ask for the caller's name, phone number, email address, or dental service again unless the caller explicitly wants to change them.\n- If the caller provides only a new appointment time, keep the previously selected appointment date.\n- If the caller provides only a new appointment date, keep the previously selected appointment time.\n- If the caller provides both, update both.\n- Do NOT confirm the appointment in this node.\n- Do NOT say \"I'm checking\", \"One moment\", or \"Let me see.\"\n- As soon as the caller provides a new appointment date, a new appointment time, or both, immediately transition to the Book Appointment node.\n- Do not continue the conversation in this node after receiving the new information."
+        }
+      },
+      {
+        "tool_id": "tool-1783245604091",
+        "name": "Check-appointment-availability",
+        "edges": [
+          {
+            "destination_node_id": "node-1782895827764",
+            "id": "edge-1783245774859-u2vvfv8kz",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "{{available}}",
+                  "operator": "==",
+                  "right": "true"
+                }
+              ],
+              "operator": "||"
+            }
+          },
+          {
+            "destination_node_id": "node-1783239732721",
+            "id": "edge-1783245830322-20jwl5ow9",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "{{available}}",
+                  "operator": "==",
+                  "right": "false"
+                }
+              ],
+              "operator": "||"
+            }
+          }
+        ],
+        "enable_typing_sound": false,
+        "id": "node-1783245609331",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": false,
+        "display_position": {
+          "x": 1902,
+          "y": 198
+        },
+        "wait_for_result": true
+      }
+    ],
+    "start_node_id": "start-node-1782831177994",
+    "start_speaker": "agent",
+    "tools": [
+      {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "parameter_type": "form",
+        "method": "POST",
+        "query_params": {},
+        "description": "Books a dental appointment by sending the patient's information to the clinic automation system. Use this only after the caller has confirmed all appointment details.",
+        "enable_typing_sound": false,
+        "type": "custom",
+        "url": "<YOUR_N8N_BOOKING_WEBHOOK_URL>",
+        "tool_id": "tool-1782896205443",
+        "args_at_root": true,
+        "timeout_ms": 120000,
+        "speak_after_execution": true,
+        "name": "book_dental_appointment",
+        "response_variables": {},
+        "speak_during_execution": false,
+        "parameters": {
+          "type": "object",
+          "required": [
+            "name",
+            "phone",
+            "email",
+            "service",
+            "date",
+            "time"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": ""
+            },
+            "date": {
+              "type": "string",
+              "description": ""
+            },
+            "time": {
+              "type": "string",
+              "description": ""
+            },
+            "phone": {
+              "type": "string",
+              "description": ""
+            },
+            "email": {
+              "type": "string",
+              "description": ""
+            },
+            "service": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      },
+      {
+        "headers": {},
+        "parameter_type": "form",
+        "method": "POST",
+        "query_params": {},
+        "description": "Checks whether the requested appointment date and time are available.\n\nUse this function after the caller has confirmed all appointment details and before attempting to book the appointment.\n\nDo not use this function to create an appointment.\nIt only checks availability.",
+        "enable_typing_sound": false,
+        "type": "custom",
+        "url": "<YOUR_N8N_AVAILABILITY_WEBHOOK_URL>",
+        "tool_id": "tool-1783245604091",
+        "args_at_root": true,
+        "timeout_ms": 120000,
+        "speak_after_execution": true,
+        "name": "check-appointment-availability",
+        "response_variables": {
+          "available": "available",
+          "message": "message"
+        },
+        "speak_during_execution": false,
+        "parameters": {
+          "type": "object",
+          "required": [
+            "name",
+            "date",
+            "time",
+            "phone",
+            "email",
+            "service"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": ""
+            },
+            "date": {
+              "type": "string",
+              "description": ""
+            },
+            "time": {
+              "type": "string",
+              "description": ""
+            },
+            "phone": {
+              "type": "string",
+              "description": ""
+            },
+            "email": {
+              "type": "string",
+              "description": ""
+            },
+            "service": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      }
+    ],
+    "model_choice": {
+      "type": "cascading",
+      "model": "gemini-3.1-flash-lite",
+      "high_priority": false
+    },
+    "tool_call_strict_mode": true,
+    "knowledge_base_ids": [],
+    "kb_config": {
+      "top_k": 3,
+      "filter_score": 0.6
+    },
+    "begin_tag_display_position": {
+      "x": 222,
+      "y": 54
+    },
+    "is_published": false,
+    "is_transfer_cf": false
+  }
+}

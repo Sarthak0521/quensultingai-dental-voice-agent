@@ -1,0 +1,325 @@
+{
+  "name": "dental clinic calendar booking",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Dental Appointment Sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "AppointmentID": "={{$now.toMillis()}}",
+            "Name": "={{$('Parse Date & Time').item.json.name}}",
+            "Phone": "={{$('Parse Date & Time').item.json.phone}}",
+            "Service": "={{$('Parse Date & Time').item.json.service}}",
+            "Date": "={{$('Parse Date & Time').item.json.date}}",
+            "Time": "={{$('Parse Date & Time').item.json.time}}",
+            "Status": "Booked",
+            "Timestamp": "={{$now}}",
+            "Email": "={{$('Parse Date & Time').item.json.email}}",
+            "CalendarEventID": "={{ $('Create Calendar Event').item.json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "AppointmentID",
+              "displayName": "AppointmentID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Service",
+              "displayName": "Service",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CalendarEventID",
+              "displayName": "CalendarEventID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "23fd3c60-3f76-44fc-a13a-1b708c201d00",
+      "name": "Log to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1392,
+        304
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "YOUR_GOOGLESHEETSOAUTH2API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Parse Date & Time').item.json.email }}",
+        "subject": "Appointment Confirmation - QuensultingAI Dental Clinic",
+        "message": "={{ \"<h2>Appointment Confirmed</h2>\" +\n\"<p>Dear \" + $(\"Parse Date & Time\").item.json.name + \",</p>\" +\n\"<p>Your appointment has been successfully booked.</p>\" +\n\"<p><strong>Details:</strong></p>\" +\n\"<ul>\" +\n\"<li>Service: \" + $(\"Parse Date & Time\").item.json.service + \"</li>\" +\n\"<li>Date: \" + $(\"Parse Date & Time\").item.json.date + \"</li>\" +\n\"<li>Time: \" + $(\"Parse Date & Time\").item.json.time + \"</li>\" +\n\"<li>Appointment ID: \" + $(\"Parse Date & Time\").item.json.appointmentId + \"</li>\" +\n\"</ul>\" +\n\"<p>We look forward to seeing you!</p>\" +\n\"<p>Best regards,<br>QuensultingAI Dental Clinic</p>\" }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "0b0541a5-65ec-4dda-bfeb-068d536b9b00",
+      "name": "Send Confirmation Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1712,
+        304
+      ],
+      "webhookId": "72d3d2c4-aab8-421f-b215-b336de402f71",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "YOUR_GMAILOAUTH2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"booked\", \"message\": \"Appointment booked successfully\" } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "2bdf09ea-502d-43a6-8ae2-bc565c502334",
+      "name": "Return Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1952,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "retell-appointment",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "9ef6894b-86b9-4acd-84ae-37e0529ed214",
+      "name": "Retell AI Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        304
+      ],
+      "webhookId": "b7d4db5e-8bee-4ded-95c5-eaa0183dc079"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_CALENDAR_ID",
+          "mode": "list",
+          "cachedResultName": "Dental Clinic Calendar"
+        },
+        "start": "={{ $json.startDateTime }}",
+        "end": "={{ $json.endDateTime }}",
+        "additionalFields": {
+          "description": "=Patient: {{$json.name}}\nPhone: {{$json.phone}} \nEmail: {{$json.email}} \nService: {{$json.service}} \nAppointment ID: {{$json.appointmentId}}",
+          "summary": "={{ $json.service }} - {{ $json.name }}"
+        }
+      },
+      "id": "4aa44783-d349-4a34-a904-b5c643915f76",
+      "name": "Create Calendar Event",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1088,
+        304
+      ],
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "YOUR_GOOGLECALENDAROAUTH2API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// ==============================\n// Parse Date & Time\n// Supports:\n// 1. YYYY-MM-DD\n// 2. July 3, 2026\n// ==============================\n\n// Incoming body\nconst body = $input.item.json.body || {};\n\nconst name = body.name;\nconst phone = body.phone;\nconst email = body.email;\nconst service = body.service;\nconst dateStr = body.date;\nconst timeStr = body.time;\n\n// -----------------------------\n// Validate\n// -----------------------------\nif (!dateStr) {\n  throw new Error(\"Appointment date is missing.\");\n}\n\nif (!timeStr) {\n  throw new Error(\"Appointment time is missing.\");\n}\n\n// -----------------------------\n// Parse Time\n// -----------------------------\nconst timeMatch = timeStr.match(/^(\\d{1,2}):(\\d{2})\\s*(AM|PM)$/i);\n\nif (!timeMatch) {\n  throw new Error(`Invalid time format: ${timeStr}`);\n}\n\nlet hours = parseInt(timeMatch[1], 10);\nconst minutes = parseInt(timeMatch[2], 10);\nconst period = timeMatch[3].toUpperCase();\n\nif (period === \"PM\" && hours !== 12) hours += 12;\nif (period === \"AM\" && hours === 12) hours = 0;\n\n// -----------------------------\n// Parse Date\n// Accepts:\n// 2026-07-03\n// July 3, 2026\n// -----------------------------\nlet year, month, day;\n\nif (/^\\d{4}-\\d{2}-\\d{2}$/.test(dateStr)) {\n\n  // ISO Format\n  [year, month, day] = dateStr.split(\"-\").map(Number);\n\n} else {\n\n  // Natural language format\n  const parsed = new Date(dateStr);\n\n  if (isNaN(parsed.getTime())) {\n    throw new Error(`Invalid date format: ${dateStr}`);\n  }\n\n  year = parsed.getFullYear();\n  month = parsed.getMonth() + 1;\n  day = parsed.getDate();\n}\n\n// -----------------------------\n// Build RFC3339 (Google Calendar)\n// -----------------------------\nfunction buildDate(hour, minute) {\n\n  return `${year}-${String(month).padStart(2,\"0\")}-${String(day).padStart(2,\"0\")}T${String(hour).padStart(2,\"0\")}:${String(minute).padStart(2,\"0\")}:00+05:30`;\n\n}\n\n// -----------------------------\n// End Time (+30 mins)\n// -----------------------------\nlet endHour = hours;\nlet endMinute = minutes + 30;\n\nif (endMinute >= 60) {\n  endMinute -= 60;\n  endHour++;\n}\n\nif (endHour >= 24) {\n  endHour = 0;\n}\n\n// -----------------------------\n// Appointment ID\n// -----------------------------\nconst appointmentId = `APT-${Date.now()}`;\n\n// -----------------------------\n// Return\n// -----------------------------\nreturn {\n  json: {\n    appointmentId,\n\n    name,\n    phone,\n    email,\n    service,\n\n    date: `${year}-${String(month).padStart(2,\"0\")}-${String(day).padStart(2,\"0\")}`,\n    time: timeStr,\n\n    startDateTime: buildDate(hours, minutes),\n    endDateTime: buildDate(endHour, endMinute)\n  }\n};"
+      },
+      "id": "b5f7e607-c4f2-42d8-83a2-facb36af78f9",
+      "name": "Parse Date & Time",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        304
+      ]
+    }
+  ],
+  "connections": {
+    "Log to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Confirmation Email": {
+      "main": [
+        [
+          {
+            "node": "Return Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retell AI Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Calendar Event": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Date & Time": {
+      "main": [
+        [
+          {
+            "node": "Create Calendar Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Asia/Kolkata"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "id": "54pAAn8kBELv0XeH",
+  "tags": []
+}
