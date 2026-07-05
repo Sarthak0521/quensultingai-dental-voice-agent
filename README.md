@@ -228,14 +228,11 @@ Repeat Availability Check
 ```text
 quensultingai-dental-voice-agent/
 
+├── api/
 ├── assets/
-├── demo/
-├── diagrams/
 ├── docs/
-├── integrations/
 ├── n8n/
-├── retell/
-├── screenshots/
+├── retell-ai/
 ├── README.md
 └── LICENSE
 ```
