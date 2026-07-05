@@ -5,6 +5,8 @@
 
 👉 https://www.loom.com/share/722af93a63854d50aa9cf348d4aaab42
 
+🎙️ **Retell AI Interactive Preview:**  
+👉 https://agent.retellai.com/preview/agent_88a2275804f92d93ee640588b9
 # 🦷 AI Voice Receptionist for QuensultingAI Dental Clinic
 
 ### AI-powered voice receptionist for automated appointment booking using Retell AI, n8n, Google Calendar, Google Sheets, Gmail, and OpenAI.
